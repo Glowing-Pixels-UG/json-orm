@@ -1,12 +1,10 @@
 require 'minitest/autorun'
-require 'debug'
 require_relative 'lib/json-orm'
-require_relative 'lib/json-orm/json-db'
 
 class JSONORMTest < Minitest::Test
   def setup
-    @db = JSONDB.new('test_data.json', 'orm.test.log')
-    @orm = JSONORM.new(@db, 'orm.test.log')
+    @db = JSONORM::DB.new('test_data.json', 'orm.test.log')
+    @orm = JSONORM::ORM.new(@db, 'orm.test.log')
     @orm.begin_transaction
   end
 
@@ -64,7 +62,7 @@ class JSONORMTest < Minitest::Test
   end
 
   def test_valid_email
-    JSONORM.register_validator(:email) do |value|
+    JSONORM::ORM.register_validator(:email) do |value|
       raise "Invalid email format" unless value.match?(/\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i)
     end
 
@@ -74,7 +72,7 @@ class JSONORMTest < Minitest::Test
   end
 
   def test_valid_age
-    JSONORM.register_validator(:age) do |value|
+    JSONORM::ORM.register_validator(:age) do |value|
       raise "Invalid age" unless value.is_a?(Integer) && value >= 0
     end
 
