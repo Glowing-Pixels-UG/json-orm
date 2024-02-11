@@ -1,5 +1,5 @@
 require 'minitest/autorun'
-require_relative 'lib/json-orm'
+require_relative '../lib/json-orm'
 
 class JSONORMTest < Minitest::Test
   def setup
@@ -99,11 +99,4 @@ class JSONORMTest < Minitest::Test
       assert_raises(RuntimeError) { @orm.commit_transaction }
     end
   end
-
-  def test_file_locking
-    # Test to ensure file locking is working (may require mocking)
-    # Mock file locking and simulate concurrent access
-  end
-
-  # Additional tests for other features or edge cases
 end

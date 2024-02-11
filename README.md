@@ -53,13 +53,113 @@ orm.begin_transaction
 orm.commit_transaction
 ```
 
-### Custom Validations
+### JSONORM::Validations
+
+The `JSONORM::Validations` module provides a flexible way to add validations to your Ruby objects. Here's how to use the newly added validators:
+
+#### Length Validator
+Checks if the length of a value is within a specified range.
+
+**Usage:**
 
 ```ruby
-JSONORM.register_validator(:email) do |value|
-  # Validation logic...
-end
+validate :attribute_name, :length, minimum: 5, maximum: 10
 ```
+
+**Example:**
+
+```ruby
+class User
+  include JSONORM::Validations
+  
+  attr_accessor :name
+  
+  validate :name, :length, minimum: 3, maximum: 50
+end
+
+user = User.new
+user.name = "Jo"
+user.validate!  # Raises "Validation failed: name is too short (minimum is 3 characters)"
+```
+
+#### Inclusion Validator
+Ensures a value is included in a specified set.
+
+**Usage:**
+
+```ruby
+validate :attribute_name, :inclusion, in: [set_of_values]
+```
+
+**Example:**
+
+```ruby
+class Product
+  include JSONORM::Validations
+  
+  attr_accessor :category
+  
+  validate :category, :inclusion, in: ['book', 'electronics', 'clothing']
+end
+
+product = Product.new
+product.category = "food"
+product.validate!  # Raises "Validation failed: category is not included in the list"
+```
+
+#### Exclusion Validator
+Ensures a value is not included in a specified set.
+
+**Usage:**
+
+```ruby
+validate :attribute_name, :exclusion, in: [set_of_values]
+```
+
+**Example:**
+
+```ruby
+class Account
+  include JSONORM::Validations
+  
+  attr_accessor :username
+  
+  validate :username, :exclusion, in: ['admin', 'root']
+end
+
+account = Account.new
+account.username = "admin"
+account.validate!  # Raises "Validation failed: username is reserved"
+```
+
+#### Custom Validator
+Allows for custom validation logic through a lambda or proc.
+
+**Usage:**
+
+```ruby
+validate :attribute_name, :custom, with: lambda { |value| some_custom_condition }
+```
+
+**Example:**
+
+```ruby
+class Order
+  include JSONORM::Validations
+  
+  attr_accessor :total_price
+  
+  validate :total_price, :custom, with: ->(value) { value > 0 && value < 10000 }
+end
+
+order = Order.new
+order.total_price = -5
+order.validate!  # Raises "Validation failed: total_price is not valid"
+```
+
+#### Integrating Validators
+
+To integrate these validators into your `validate!` method, simply add the cases as shown in the initial response to handle each validation type. Ensure that your `validate!` method checks for each validator type and applies the corresponding validation logic.
 
 ### Query Chaining
 

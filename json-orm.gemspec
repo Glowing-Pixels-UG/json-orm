@@ -1,6 +1,6 @@
 Gem::Specification.new do |spec|
   spec.name          = "json-orm"
-  spec.version       = JSONORM::VERSION
+  spec.version = File.read(File.join(File.dirname(__FILE__), 'lib', 'json-orm', 'version.rb')).match(/VERSION = ['"](.*)['"]/)[1]
   spec.authors       = ["Damir Mukimov"]
   spec.email         = ["mukimov.d@gmail.com"]
 
