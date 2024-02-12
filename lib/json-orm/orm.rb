@@ -41,7 +41,7 @@ module JSONORM
     end
 
     def create(attributes)
-      attributes[:id] = next_id unless attributes.key?(:id)
+      attributes[:id] = next_id unless attributes.key?(:id) && attributes[:id]
       validate_attributes!(attributes)
       transaction_data.push(attributes)
       attributes

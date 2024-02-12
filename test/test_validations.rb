@@ -1,6 +1,4 @@
-require 'minitest/autorun'
-require_relative '../lib/json-orm'
-require_relative '../lib/json-orm/base_model'
+require_relative 'helper'
 
 class TestUser < JSONORM::BaseModel
   attr_accessor :name, :email, :age
@@ -12,9 +10,6 @@ end
 
 class JSONORMValidationTest < Minitest::Test
   def setup
-    @db = JSONORM::DB.new('test_data.json', 'orm.test.log')
-    @orm = JSONORM::ORM.new(@db, 'orm.test.log')
-    @orm.begin_transaction
     # Registering validators for new test cases
     JSONORM::ORM.register_validator(:length) do |attribute, value, options|
       min_length = options[:minimum] || 0
@@ -39,29 +34,19 @@ class JSONORMValidationTest < Minitest::Test
       raise "#{attribute} is not valid according to custom logic" unless custom_logic.call(value)
     end
   end
-    def after_tests
-      File.delete('test_data.json.backup') if File.exist?('test_data.backup')
-    end
 
-    def teardown
-      @orm.rollback_transaction
-      File.delete('test_data.json') if File.exist?('test_data.json')
-      File.delete('test_data.json.lock') if File.exist?('test_data.json.lock')
-      File.delete('test_data.json.backup') if File.exist?('test_data.backup')
-    end
-
-def test_presence_validation
-    user = TestUser.new
+  def test_presence_validation
+    user = TestUser.new({}, orm_instance: @orm)
     assert_raises(RuntimeError) { user.save }
   end
 
   def test_email_format_validation
-    user = TestUser.new(email: "invalid")
+    user = TestUser.new({email: "invalid"}, orm_instance: @orm)
     assert_raises(RuntimeError) { user.save }
   end
 
   def test_age_numericality_validation
-    user = TestUser.new(age: -1)
+    user = TestUser.new({age: -1}, orm_instance: @orm)
     assert_raises(RuntimeError) { user.save }
   end
 

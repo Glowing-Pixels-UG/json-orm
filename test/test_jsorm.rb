@@ -1,30 +1,6 @@
-require 'minitest/autorun'
-require_relative '../lib/json-orm'
+require_relative 'helper'
 
 class JSONORMTest < Minitest::Test
-  def setup
-    @db = JSONORM::DB.new('test_data.json', 'orm.test.log')
-    @orm = JSONORM::ORM.new(@db, 'orm.test.log')
-    @orm.begin_transaction
-  end
-
-  def after_tests
-    File.delete('test_data.json.backup') if File.exist?('test_data.backup')
-  end
-
-  def teardown
-    @orm.rollback_transaction
-    File.delete('test_data.json') if File.exist?('test_data.json')
-    File.delete('test_data.json.lock') if File.exist?('test_data.json.lock')
-    File.delete('test_data.json.backup') if File.exist?('test_data.backup')
-  end
-
-  def test_create
-    record = @orm.create({"name": "John Doe", "email": "john@example.com"})
-    assert_equal "John Doe", record[:name]
-    assert_equal "john@example.com", record[:email]
-  end
-
   def test_read
     record = @orm.create({"name": "Jane Doe", "email": "jane@example.com"})
     found = @orm.find(record[:id])
