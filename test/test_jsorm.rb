@@ -1,24 +1,26 @@
+# frozen_string_literal: true
+
 require_relative 'helper'
 
 class JSONORMTest < Minitest::Test
   def test_read
-    record = @orm.create({"name": "Jane Doe", "email": "jane@example.com"})
+    record = @orm.create({ "name": 'Jane Doe', "email": 'jane@example.com' })
     found = @orm.find(record[:id])
-    assert_equal "Jane Doe", found[:name]
-    assert_equal "jane@example.com", found[:email]
+    assert_equal 'Jane Doe', found[:name]
+    assert_equal 'jane@example.com', found[:email]
   end
 
   def test_update
-    record = @orm.create({"name": "Jim Doe", "email": "jim@example.com"})
-    @orm.update(record[:id], {name: "James Doe"})
+    record = @orm.create({ "name": 'Jim Doe', "email": 'jim@example.com' })
+    @orm.update(record[:id], { name: 'James Doe' })
     updated = @orm.find(record[:id])
 
-    assert_equal "James Doe", updated[:name]
-    assert_equal "jim@example.com", updated[:email]
+    assert_equal 'James Doe', updated[:name]
+    assert_equal 'jim@example.com', updated[:email]
   end
 
   def test_delete
-    record = @orm.create({"name": "Jack Doe", "email": "jack@example.com"})
+    record = @orm.create({ "name": 'Jack Doe', "email": 'jack@example.com' })
     @orm.delete(record[:id])
 
     assert_nil @orm.find(record[:id])
@@ -26,52 +28,51 @@ class JSONORMTest < Minitest::Test
 
   def test_transaction_commit
     @orm.begin_transaction
-    record = @orm.create({"name": "Jill Doe", "email": "jill@example.com"})
+    record = @orm.create({ "name": 'Jill Doe', "email": 'jill@example.com' })
     @orm.commit_transaction
-    assert_equal "Jill Doe", @orm.find(record[:id])[:name]
+    assert_equal 'Jill Doe', @orm.find(record[:id])[:name]
   end
 
   def test_transaction_rollback
-    record = @orm.create({"name": "Joe Doe", "email": "joe@example.com"})
+    record = @orm.create({ "name": 'Joe Doe', "email": 'joe@example.com' })
     @orm.rollback_transaction
     assert_nil @orm.find(record[:id])
   end
 
   def test_valid_email
     JSONORM::ORM.register_validator(:email) do |value|
-      raise "Invalid email format" unless value.match?(/\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i)
+      raise 'Invalid email format' unless value.match?(/\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i)
     end
 
-    assert_raises("Invalid email format") do
-      @orm.create({"name": "Invalid Email", "email": "invalid"})
+    assert_raises('Invalid email format') do
+      @orm.create({ "name": 'Invalid Email', "email": 'invalid' })
     end
   end
 
   def test_valid_age
     JSONORM::ORM.register_validator(:age) do |value|
-      raise "Invalid age" unless value.is_a?(Integer) && value >= 0
+      raise 'Invalid age' unless value.is_a?(Integer) && value >= 0
     end
 
     assert_raises(RuntimeError) do
-      @orm.create({"name": "Invalid Age", "age": -5})
+      @orm.create({ "name": 'Invalid Age', "age": -5 })
     end
   end
 
   def test_query_chaining
-    @orm.create({"name": "Alice", "age": 30, "city": "Wonderland"})
-    @orm.create({"name": "Bob", "age": 30, "city": "Gotham"})
-    @orm.create({"name": "Charlie", "age": 40, "city": "Wonderland"})
+    @orm.create({ "name": 'Alice', "age": 30, "city": 'Wonderland' })
+    @orm.create({ "name": 'Bob', "age": 30, "city": 'Gotham' })
+    @orm.create({ "name": 'Charlie', "age": 40, "city": 'Wonderland' })
 
-    results = @orm.where(:age, 30).where(:city, "Wonderland").execute
+    results = @orm.where(:age, 30).where(:city, 'Wonderland').execute
     assert_equal 1, results.size
-    assert_equal "Alice", results.first[:name]
+    assert_equal 'Alice', results.first[:name]
   end
-
 
   def test_error_handling_on_write
     # Simulate an error during write operation, e.g., invalid data format
-    @orm.create({"name": "Test", "email": "test@example.com"})
-    @orm.database.stub :write, ->(_data) { raise IOError, "Write error" } do
+    @orm.create({ "name": 'Test', "email": 'test@example.com' })
+    @orm.database.stub :write, ->(_data) { raise IOError, 'Write error' } do
       assert_raises(RuntimeError) { @orm.commit_transaction }
     end
   end

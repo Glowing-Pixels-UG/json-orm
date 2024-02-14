@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'minitest/autorun'
 require 'minitest/parallel'
 require_relative '../lib/json-orm'
@@ -6,7 +8,6 @@ require_relative '../lib/json-orm/base_model'
 # Dynamically determine the number of processors to use
 require 'etc'
 Minitest.parallel_executor = Minitest::Parallel::Executor.new(Etc.nprocessors)
-
 
 # Setup and teardown methods for global test environment
 Minitest::Test.class_eval do

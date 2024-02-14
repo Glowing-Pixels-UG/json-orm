@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module JSONORM
   class ORM
     attr_reader :database, :transaction_data, :logger
@@ -69,10 +71,10 @@ module JSONORM
     end
 
     def commit_transaction
-      logger.info("Starting transaction commit")
+      logger.info('Starting transaction commit')
       database.write(transaction_data)
-      logger.info("Transaction committed successfully")
-    rescue => e
+      logger.info('Transaction committed successfully')
+    rescue StandardError => e
       logger.error("Failed to commit transaction: #{e.message}")
       raise "Failed to commit transaction: #{e.message}"
     ensure
@@ -95,20 +97,17 @@ module JSONORM
     end
 
     def validate_attributes!(attributes, check_id = true)
-      raise "Record must have an id" if check_id && !attributes[:id]
+      raise 'Record must have an id' if check_id && !attributes[:id]
 
       attributes.each do |key, value|
         validate_attribute(key, value)
       end
     end
 
-    # Update the validation method
     def validate_attribute(key, value)
-      if self.class.custom_validators[key]
-        self.class.custom_validators[key].call(value)
-      else
-        # Default validations (if any)
-      end
+      return unless self.class.custom_validators.key?(key)
+
+      self.class.custom_validators[key].call(value)
     end
   end
 end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'json'
 require 'fileutils'
 require 'logger'
@@ -20,18 +22,17 @@ module JSONORM
       end
     end
 
-  def write(data)
-    with_lock do
-      create_backup
-      File.open(file_path, 'w') { |f| f.write(JSON.pretty_generate(data)) }
-      logger.info("Data written successfully")
-    rescue IOError => e
-      restore_backup
-      logger.error("Error writing to file: #{e.message}")
-      raise "Error writing to file: #{e.message}"
+    def write(data)
+      with_lock do
+        create_backup
+        File.open(file_path, 'w') { |f| f.write(JSON.pretty_generate(data)) }
+        logger.info('Data written successfully')
+      rescue IOError => e
+        restore_backup
+        logger.error("Error writing to file: #{e.message}")
+        raise "Error writing to file: #{e.message}"
+      end
     end
-  end
-
 
     private
 
@@ -40,21 +41,20 @@ module JSONORM
     end
 
     def create_backup
-      logger.info("Creating backup")
+      logger.info('Creating backup')
       FileUtils.cp(file_path, backup_path)
-    rescue => e
+    rescue StandardError => e
       logger.error("Failed to create backup: #{e.message}")
       raise "Failed to create backup: #{e.message}"
     end
 
     def restore_backup
-      logger.info("Restoring from backup")
+      logger.info('Restoring from backup')
       FileUtils.cp(backup_path, file_path)
-    rescue => e
+    rescue StandardError => e
       logger.error("Failed to restore backup: #{e.message}")
       raise "Failed to restore backup: #{e.message}"
     end
-
 
     def with_lock
       File.open("#{file_path}.lock", 'w') do |f|
@@ -66,4 +66,3 @@ module JSONORM
     end
   end
 end
-
