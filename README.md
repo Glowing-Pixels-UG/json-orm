@@ -19,8 +19,8 @@ While designed for simplicity and ease of use, `json-orm` hasn't been optimized 
 
 - [ ] Refactor logging
 - [x] Add tests to DB class
-- [] Add RuboCop to GitHub Actions
-- [] Clean up better after test
+- [ ] Add RuboCop to GitHub Actions
+- [ ] Clean up better after test
 - [x] Improve test to validate reliability
 - [x] Add Validations class
 

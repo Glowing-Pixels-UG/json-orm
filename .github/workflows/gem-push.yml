@@ -3,8 +3,6 @@ name: Ruby Gem
 on:
   push:
     branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
 
 jobs:
   build:
@@ -20,6 +18,9 @@ jobs:
       uses: ruby/setup-ruby@v1
       with:
         ruby-version: 3.2.0
+
+    - name: Minitest
+      run: rake test
 
     - name: Publish to GPR
       run: |
@@ -42,4 +43,4 @@ jobs:
         gem build *.gemspec
         gem push *.gem
       env:
-        GEM_HOST_API_KEY: "${{secrets.RUBYGEMS_AUTH_TOKEN}}"
+        GEM_HOST_API_KEY: "${{secrets.GEM_HOST_API_KEY}}"
