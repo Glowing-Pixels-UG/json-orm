@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'logger'
 
 module JSONORM
@@ -23,7 +25,8 @@ module JSONORM
     end
 
     def initialize(attributes = {}, orm_instance:)
-      raise "ORM instance is required" unless orm_instance
+      raise 'ORM instance is required' unless orm_instance
+
       self.class.orm_instance = orm_instance
       @orm_instance = orm_instance
       attributes.each do |attr, value|
@@ -46,7 +49,7 @@ module JSONORM
       true
     rescue StandardError => e
       logger.error("Failed to save record for #{self.class.name}, Error: #{e.message}")
-      raise RuntimeError.new("Failed to save record: #{e.message}")
+      raise "Failed to save record: #{e.message}"
     end
 
     private

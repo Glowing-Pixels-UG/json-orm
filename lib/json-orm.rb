@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'logger'
 require_relative 'json-orm/version'
 require_relative 'json-orm/db'

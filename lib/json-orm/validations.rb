@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module JSONORM
   module Validations
     def self.included(base)
@@ -19,7 +21,7 @@ module JSONORM
     def validate!
       self.class.validators.each do |attribute, validators|
         validators.each do |validator|
-          value = self.send(attribute)
+          value = send(attribute)
           case validator[:type]
           when :presence
             raise "Validation failed: #{attribute} can't be blank" if value.nil? || value.to_s.empty?
@@ -27,9 +29,7 @@ module JSONORM
             regex = validator[:options][:with]
             raise "Validation failed: #{attribute} is invalid" unless value.match?(regex)
           when :numericality
-            unless value.is_a?(Numeric)
-              raise "Validation failed: #{attribute} is not a number"
-            end
+            raise "Validation failed: #{attribute} is not a number" unless value.is_a?(Numeric)
           when :length
             min_length = validator[:options][:minimum] || 0
             max_length = validator[:options][:maximum] || Float::INFINITY
@@ -40,20 +40,14 @@ module JSONORM
               raise "Validation failed: #{attribute} is too long (maximum is #{max_length} characters)"
             end
           when :inclusion
-          in_set = validator[:options][:in]
-          unless in_set.include?(value)
-            raise "Validation failed: #{attribute} is not included in the list"
-          end
+            in_set = validator[:options][:in]
+            raise "Validation failed: #{attribute} is not included in the list" unless in_set.include?(value)
           when :exclusion
             in_set = validator[:options][:in]
-            if in_set.include?(value)
-              raise "Validation failed: #{attribute} is reserved"
-            end
+            raise "Validation failed: #{attribute} is reserved" if in_set.include?(value)
           when :custom
             custom_validation = validator[:options][:with]
-            unless custom_validation.call(value)
-              raise "Validation failed: #{attribute} is not valid"
-            end
+            raise "Validation failed: #{attribute} is not valid" unless custom_validation.call(value)
           end
         end
       end

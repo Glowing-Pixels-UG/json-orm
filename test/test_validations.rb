@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'helper'
 
 class TestUser < JSONORM::BaseModel
@@ -41,14 +43,12 @@ class JSONORMValidationTest < Minitest::Test
   end
 
   def test_email_format_validation
-    user = TestUser.new({email: "invalid"}, orm_instance: @orm)
+    user = TestUser.new({ email: 'invalid' }, orm_instance: @orm)
     assert_raises(RuntimeError) { user.save }
   end
 
   def test_age_numericality_validation
-    user = TestUser.new({age: -1}, orm_instance: @orm)
+    user = TestUser.new({ age: -1 }, orm_instance: @orm)
     assert_raises(RuntimeError) { user.save }
   end
-
-
 end

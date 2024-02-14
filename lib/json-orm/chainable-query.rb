@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module JSONORM
   class ChainableQuery
     def initialize(orm, data)
